@@ -34,6 +34,9 @@ public class ParseApplication extends Application {
                 .server("https://limeliteparse.herokuapp.com/parse").build());
 
         // New test creation of object below
+        // For testing purposes. If this object is not in the db, Parse is not configured correctly
+        // Debugging hint if object does not show up: CHECK to see if server urls used in initializing
+        // the server for the dashboard and in the app are "https" not "http"
         ParseObject testObject = new ParseObject("TestObject");
         testObject.put("foo", "bar");
         testObject.saveInBackground();
