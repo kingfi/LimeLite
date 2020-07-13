@@ -3,6 +3,7 @@ package com.example.limelite;
 import android.app.Application;
 
 import com.parse.Parse;
+import com.parse.ParseObject;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -30,6 +31,11 @@ public class ParseApplication extends Application {
                 .applicationId("bmfc_limelite") // should correspond to APP_ID env variable
                 .clientKey(null)  // set explicitly unless clientKey is explicitly configured on Parse server
                 .clientBuilder(builder)
-                .server("http://limeliteparse.herokuapp.com/parse").build());
+                .server("https://limeliteparse.herokuapp.com/parse").build());
+
+        // New test creation of object below
+        ParseObject testObject = new ParseObject("TestObject");
+        testObject.put("foo", "bar");
+        testObject.saveInBackground();
     }
 }
