@@ -17,6 +17,7 @@ import com.parse.ParseUser;
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
+
     // Initialize widgets variables
     EditText editTextUsername;
     EditText editTextPassword;
