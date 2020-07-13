@@ -6,4 +6,94 @@
     android:layout_height="match_parent"
     tools:context=".SignUpActivity">
 
+    <EditText
+        android:id="@+id/editTextFirstName"
+        android:layout_width="150dp"
+        android:layout_height="45dp"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:hint="First Name"
+        android:inputType="textPersonName"
+        app:layout_constraintBaseline_toBaselineOf="@+id/editTextLastName"
+        app:layout_constraintEnd_toStartOf="@+id/editTextLastName" />
+
+    <EditText
+        android:id="@+id/editTextLastName"
+        android:layout_width="150dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="136dp"
+        android:layout_marginEnd="47dp"
+        android:ems="10"
+        android:hint="Last Name"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextTextEmailAddress"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="email"
+        android:inputType="textEmailAddress"
+        app:layout_constraintEnd_toEndOf="@+id/editTextLastName"
+        app:layout_constraintStart_toStartOf="@+id/editTextFirstName"
+        app:layout_constraintTop_toBottomOf="@+id/editTextFirstName" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.50121653" />
+
+    <EditText
+        android:id="@+id/editTextSignUpUsername"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:ems="10"
+        android:hint="username"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="@+id/editTextTextEmailAddress"
+        app:layout_constraintStart_toStartOf="@+id/editTextTextEmailAddress"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextEmailAddress" />
+
+    <EditText
+        android:id="@+id/editTextSignUpPassword"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="password"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="@+id/editTextSignUpUsername"
+        app:layout_constraintHorizontal_bias="0.547"
+        app:layout_constraintStart_toStartOf="@+id/editTextSignUpUsername"
+        app:layout_constraintTop_toBottomOf="@+id/editTextSignUpUsername" />
+
+    <EditText
+        android:id="@+id/editTextSignUpPasswordRetype"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="retype password"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="@+id/editTextSignUpPassword"
+        app:layout_constraintStart_toStartOf="@+id/editTextSignUpPassword"
+        app:layout_constraintTop_toBottomOf="@+id/editTextSignUpPassword" />
+
+    <Button
+        android:id="@+id/buttonSignUpPage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Sign Up"
+        app:layout_constraintEnd_toEndOf="@+id/editTextSignUpPasswordRetype"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="@+id/editTextSignUpPasswordRetype"
+        app:layout_constraintTop_toBottomOf="@+id/editTextSignUpPasswordRetype" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
