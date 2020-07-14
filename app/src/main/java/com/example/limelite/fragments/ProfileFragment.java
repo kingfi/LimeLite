@@ -6,25 +6,38 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.limelite.adapters.ProfileAdapter;
 import com.example.limelite.R;
 import com.example.limelite.SettingsActivity;
+import com.example.limelite.models.Link;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ProfileFragment extends Fragment {
 
-    TextView textViewProfileUsername;
-    TextView textViewFriendsCount;
-    ImageView buttonSettings;
-    RecyclerView recyclerViewLinks;
+    private static final String TAG = "ProfileFragment" ;
+    private TextView textViewProfileUsername;
+    private TextView textViewFriendsCount;
+    private ImageView buttonSettings;
+    private RecyclerView recyclerViewLinks;
+    private List<Link> allLinks;
+    private ProfileAdapter adapter;
 
 
     @Override
@@ -54,6 +67,40 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        // create the data source
+        allLinks = new ArrayList<>();
+        // create the adapter
+        adapter = new ProfileAdapter(getContext(), allLinks);
+        // set the adapter on the recycler view
+        recyclerViewLinks.setAdapter(adapter);
+        // set the layout manager on the recycler view
+        recyclerViewLinks.setLayoutManager(new LinearLayoutManager(getContext()));
+        queryUserLinks();
 
+
+    }
+
+    private void queryUserLinks() {
+        ParseQuery<Link> query = ParseQuery.getQuery(Link.class);
+
+        //include author information
+        query.include(Link.KEY_LINK_USER);
+        query.whereEqualTo(Link.KEY_LINK_USER, ParseUser.getCurrentUser());
+        query.setLimit(20);
+        //query.addDescendingOrder(Link.KEY_CREATED_AT);
+
+        query.findInBackground(new FindCallback<Link>() {
+            @Override
+            public void done(List<Link> links, ParseException e) {
+                if (e != null) {
+                    Log.e(TAG, "Issue with getting links", e);
+                }
+                for (Link link : links) {
+                    Log.i(TAG, "Link: " + link.getUrl());
+                }
+                allLinks.addAll(links);
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 }
