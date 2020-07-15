@@ -16,12 +16,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.limelite.adapters.ProfileAdapter;
 import com.example.limelite.R;
 import com.example.limelite.SettingsActivity;
 import com.example.limelite.models.Link;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -38,6 +40,7 @@ public class ProfileFragment extends Fragment {
     private RecyclerView recyclerViewLinks;
     private List<Link> allLinks;
     private ProfileAdapter adapter;
+    private ImageView imageViewProfile;
 
 
     @Override
@@ -55,9 +58,20 @@ public class ProfileFragment extends Fragment {
         textViewFriendsCount = view.findViewById(R.id.textViewFriendsCount);
         buttonSettings = view.findViewById(R.id.buttonSettings);
         recyclerViewLinks = view.findViewById(R.id.recyclerViewLinks);
+        imageViewProfile = view.findViewById(R.id.imageViewProfilePic);
+        textViewFriendsCount = view.findViewById(R.id.textViewFriendsCount);
+
+        ParseFile profile = (ParseFile) ParseUser.getCurrentUser().get("profilePic");
+        if (profile != null) {
+            Glide.with(getContext()).load(profile.getUrl()).into(imageViewProfile);
+        }
+
+        // Set Friend Count
+
+
 
         // Set username to view
-        textViewProfileUsername.setText(ParseUser.getCurrentUser().getUsername());
+        textViewProfileUsername.setText((String) ParseUser.getCurrentUser().get("firstName"));
 
         buttonSettings.setOnClickListener(new View.OnClickListener() {
             @Override
