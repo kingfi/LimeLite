@@ -6,6 +6,9 @@ import com.example.limelite.models.Link;
 import com.example.limelite.models.Relationships;
 import com.parse.Parse;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
+
+import org.json.JSONArray;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -43,8 +46,15 @@ public class ParseApplication extends Application {
         // For testing purposes. If this object is not in the db, Parse is not configured correctly
         // Debugging hint if object does not show up: CHECK to see if server urls used in initializing
         // the server for the dashboard and in the app are "https" not "http"
-        ParseObject testObject = new ParseObject("TestObject");
-        testObject.put("foo", "bar");
-        testObject.saveInBackground();
+//        ParseObject testObject = new ParseObject("TestObject");
+//        testObject.put("foo", "bar");
+//        JSONArray array = new JSONArray();
+//        Relationships r = new Relationships();
+//        r.setStatus(0);
+//        r.setRequestor(ParseUser.getCurrentUser());
+//        r.setRequestee(ParseUser.getCurrentUser());
+//        array.put(r);
+//        testObject.put("goo", array);
+//        testObject.saveInBackground();
     }
 }

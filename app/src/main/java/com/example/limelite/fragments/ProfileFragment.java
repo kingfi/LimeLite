@@ -15,17 +15,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.limelite.adapters.ProfileAdapter;
 import com.example.limelite.R;
 import com.example.limelite.SettingsActivity;
 import com.example.limelite.models.Link;
+import com.example.limelite.models.Relationships;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +47,7 @@ public class ProfileFragment extends Fragment {
     private List<Link> allLinks;
     private ProfileAdapter adapter;
     private ImageView imageViewProfile;
+    private ArrayList<Relationships> relationsList;
 
 
     @Override
@@ -66,8 +73,13 @@ public class ProfileFragment extends Fragment {
             Glide.with(getContext()).load(profile.getUrl()).into(imageViewProfile);
         }
 
-        // Set Friend Count
-
+        // Populate Relationships list
+        relationsList = new ArrayList<>();
+        try {
+            queryRelationships();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
 
         // Set username to view
@@ -94,6 +106,30 @@ public class ProfileFragment extends Fragment {
 
     }
 
+    private void queryRelationships() throws ParseException {
+        ParseQuery queryRequestor = ParseQuery.getQuery(Relationships.class);
+        ParseQuery queryRequestee = ParseQuery.getQuery(Relationships.class);
+
+
+        queryRequestor.include(Relationships.KEY_REQUESTOR);
+        queryRequestor.whereEqualTo(Relationships.KEY_REQUESTOR, ParseUser.getCurrentUser());
+
+        queryRequestee.include(Relationships.KEY_REQUESTEE);
+        queryRequestee.whereEqualTo(Relationships.KEY_REQUESTEE, ParseUser.getCurrentUser());
+
+        relationsList.addAll((ArrayList<Relationships>) queryRequestor.find());
+        relationsList.addAll((ArrayList<Relationships>) queryRequestee.find());
+
+        Integer friends = 0;
+        for (Relationships relation: relationsList) {
+            if (relation.getStatus() == 1) {
+                friends ++;
+            }
+        }
+        textViewFriendsCount.setText("Friends: " + friends);
+
+    }
+
     private void queryUserLinks() {
         ParseQuery<Link> query = ParseQuery.getQuery(Link.class);
 
@@ -116,5 +152,9 @@ public class ProfileFragment extends Fragment {
                 adapter.notifyDataSetChanged();
             }
         });
+
+
+
+
     }
 }

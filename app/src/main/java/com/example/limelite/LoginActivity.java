@@ -4,15 +4,22 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.limelite.models.Relationships;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+
+import org.json.JSONArray;
+import org.parceler.Parcels;
+
+import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -90,6 +97,7 @@ public class LoginActivity extends AppCompatActivity {
     // Function to go to the main activity
     private void goMainActivity() {
         Intent i = new Intent(this, MainActivity.class);
+
         startActivity(i);
 
         // Make sure user cannot click back button back to LoginActivity
