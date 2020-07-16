@@ -46,7 +46,7 @@ public class ProfileFragment extends Fragment {
     private RecyclerView recyclerViewLinks;
     private List<Link> allLinks;
     private ProfileAdapter adapter;
-    private ImageView imageViewProfile;
+    private ImageView imageViewProfilePic;
     private ArrayList<Relationships> relationsList;
 
 
@@ -65,22 +65,38 @@ public class ProfileFragment extends Fragment {
         textViewFriendsCount = view.findViewById(R.id.textViewFriendsCount);
         buttonSettings = view.findViewById(R.id.buttonSettings);
         recyclerViewLinks = view.findViewById(R.id.recyclerViewLinks);
-        imageViewProfile = view.findViewById(R.id.imageViewProfilePic);
+        imageViewProfilePic = view.findViewById(R.id.imageViewProfilePic);
         textViewFriendsCount = view.findViewById(R.id.textViewFriendsCount);
 
-        ParseFile profile = (ParseFile) ParseUser.getCurrentUser().get("profilePic");
-        if (profile != null) {
-            Log.i(TAG, profile.getUrl());
-            Glide.with(getContext()).load(profile.getUrl()).into(imageViewProfile);
+        try {
+            ParseUser user = ParseUser.getCurrentUser().fetch();
+            ParseFile profile = user.getParseFile("profilePic");
+            if (profile != null) {
+                Log.i(TAG, profile.getUrl());
+                Glide.with(getContext()).load(profile.getUrl()).into(imageViewProfilePic);
+                Log.i(TAG, "Profile Set");
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
-        // Populate Relationships list
+
+        // Populate Relationships list and Display number of friends
         relationsList = new ArrayList<>();
         try {
             queryRelationships();
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+        //OnClick for buttonSettings
+        buttonSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getContext(), SettingsActivity.class);
+                startActivity(i);
+            }
+        });
 
 
         // Set username to view
