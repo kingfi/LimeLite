@@ -2,6 +2,8 @@ package com.example.limelite;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -18,11 +20,14 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.limelite.fragments.ProfileFragment;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.ProgressCallback;
 import com.parse.SaveCallback;
+
+import org.parceler.Parcels;
 
 import java.io.File;
 
@@ -85,7 +90,13 @@ public class SettingsActivity extends AppCompatActivity {
                                     ex.printStackTrace();
                                 }
                                 // Save Map Visibility
+
                                 Toast.makeText(getBaseContext(),"Saved!", Toast.LENGTH_SHORT).show();
+
+                                Intent i = new Intent(getBaseContext(),MainActivity.class);
+                                startActivity(i);
+
+
                             }
                         }
                     });

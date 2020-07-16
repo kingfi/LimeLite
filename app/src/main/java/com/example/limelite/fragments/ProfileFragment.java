@@ -1,11 +1,13 @@
 package com.example.limelite.fragments;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,6 +50,7 @@ public class ProfileFragment extends Fragment {
     private ProfileAdapter adapter;
     private ImageView imageViewProfilePic;
     private ArrayList<Relationships> relationsList;
+    public static final int SETTINGS_RESULT_CODE = 123;
 
 
     @Override
@@ -67,6 +70,8 @@ public class ProfileFragment extends Fragment {
         recyclerViewLinks = view.findViewById(R.id.recyclerViewLinks);
         imageViewProfilePic = view.findViewById(R.id.imageViewProfilePic);
         textViewFriendsCount = view.findViewById(R.id.textViewFriendsCount);
+
+
 
         try {
             ParseUser user = ParseUser.getCurrentUser().fetch();
@@ -89,24 +94,15 @@ public class ProfileFragment extends Fragment {
             e.printStackTrace();
         }
 
-        //OnClick for buttonSettings
-        buttonSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(getContext(), SettingsActivity.class);
-                startActivity(i);
-            }
-        });
-
-
         // Set username to view
         textViewProfileUsername.setText((String) ParseUser.getCurrentUser().get("firstName"));
 
+        //onClick for button settings
         buttonSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getContext(), SettingsActivity.class);
-                startActivity(i);
+                startActivityForResult(i, SETTINGS_RESULT_CODE);
             }
         });
 
@@ -169,9 +165,7 @@ public class ProfileFragment extends Fragment {
                 adapter.notifyDataSetChanged();
             }
         });
-
-
-
-
     }
+
+//    
 }
