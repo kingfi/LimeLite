@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EditLinkActivity">
+    tools:context=".AddLinkActivity">
 
     <Spinner
-        android:id="@+id/spinnerType"
+        android:id="@+id/spinnerAddType"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -19,38 +19,26 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editTextLink"
+        android:id="@+id/editTextAddLink"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="Link"
         android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="@+id/spinnerType"
+        app:layout_constraintEnd_toEndOf="@+id/spinnerAddType"
         app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="@+id/spinnerType"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerType" />
+        app:layout_constraintStart_toStartOf="@+id/spinnerAddType"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerAddType" />
 
     <Button
-        android:id="@+id/buttonSaveLink"
+        android:id="@+id/buttonAddLink"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:text="Save"
-        app:layout_constraintEnd_toEndOf="@+id/editTextLink"
+        android:text="Add"
+        app:layout_constraintEnd_toEndOf="@+id/editTextAddLink"
         app:layout_constraintHorizontal_bias="0.524"
-        app:layout_constraintStart_toStartOf="@+id/editTextLink"
-        app:layout_constraintTop_toBottomOf="@+id/editTextLink" />
-
-    <Button
-        android:id="@+id/buttonDeleteLink"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Delete"
-        app:layout_constraintEnd_toEndOf="@+id/editTextLink"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/editTextLink"
-        app:layout_constraintTop_toBottomOf="@+id/buttonSaveLink" />
-
+        app:layout_constraintStart_toStartOf="@+id/editTextAddLink"
+        app:layout_constraintTop_toBottomOf="@+id/editTextAddLink" />
 </androidx.constraintlayout.widget.ConstraintLayout>

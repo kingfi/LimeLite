@@ -15,11 +15,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.limelite.AddLinkActivity;
 import com.example.limelite.adapters.ProfileAdapter;
 import com.example.limelite.R;
 import com.example.limelite.SettingsActivity;
@@ -50,6 +52,7 @@ public class ProfileFragment extends Fragment {
     private ProfileAdapter adapter;
     private ImageView imageViewProfilePic;
     private ArrayList<Relationships> relationsList;
+    private Button buttonAddLink;
     public static final int SETTINGS_RESULT_CODE = 123;
 
 
@@ -70,9 +73,9 @@ public class ProfileFragment extends Fragment {
         recyclerViewLinks = view.findViewById(R.id.recyclerViewLinks);
         imageViewProfilePic = view.findViewById(R.id.imageViewProfilePic);
         textViewFriendsCount = view.findViewById(R.id.textViewFriendsCount);
+        buttonAddLink = view.findViewById(R.id.buttonAddLink);
 
-
-
+        // Set profile picture
         try {
             ParseUser user = ParseUser.getCurrentUser().fetch();
             ParseFile profile = user.getParseFile("profilePic");
@@ -103,6 +106,16 @@ public class ProfileFragment extends Fragment {
             public void onClick(View view) {
                 Intent i = new Intent(getContext(), SettingsActivity.class);
                 startActivityForResult(i, SETTINGS_RESULT_CODE);
+            }
+        });
+
+        //onClick for Adding Links
+        buttonAddLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Go to AddLink Activity
+                Intent i = new Intent(getContext(), AddLinkActivity.class);
+                startActivity(i);
             }
         });
 

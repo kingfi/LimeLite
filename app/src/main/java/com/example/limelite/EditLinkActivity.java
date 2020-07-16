@@ -17,12 +17,13 @@ import com.parse.ParseException;
 
 import org.parceler.Parcels;
 
-public class EditLinkActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class EditLinkActivity extends AppCompatActivity {
 
     private Link link;
     private Spinner spinnerType;
     private EditText editTextLink;
     private Button buttonSaveLink;
+    private Button buttonDeleteLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,7 @@ public class EditLinkActivity extends AppCompatActivity implements AdapterView.O
         spinnerType = findViewById(R.id.spinnerType);
         editTextLink = findViewById(R.id.editTextLink);
         buttonSaveLink = findViewById(R.id.buttonSaveLink);
+        buttonDeleteLink = findViewById(R.id.buttonDeleteLink);
 
         editTextLink.setText(link.getUrl());
 
@@ -43,7 +45,6 @@ public class EditLinkActivity extends AppCompatActivity implements AdapterView.O
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.linkTypes, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerType.setAdapter(adapter);
-        spinnerType.setOnItemSelectedListener(this);
 
         // Set spinner position to be type of the link
         int position = adapter.getPosition(link.getType());
@@ -67,18 +68,9 @@ public class EditLinkActivity extends AppCompatActivity implements AdapterView.O
             }
         });
 
+        // Delete button functionality
 
 
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long l) {
-        String text = parent.getItemAtPosition(position).toString();
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
-    }
 }

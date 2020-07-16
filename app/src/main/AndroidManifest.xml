@@ -14,7 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".EditLinkActivity"></activity>
+        <activity android:name=".AddLinkActivity"></activity>
+        <activity android:name=".FriendListActivity" />
+        <activity android:name=".EditLinkActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
