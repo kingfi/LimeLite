@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.EditLinkFragment">
+    tools:context=".EditLinkActivity">
 
     <Spinner
         android:id="@+id/spinnerType"
@@ -41,4 +41,5 @@
         app:layout_constraintHorizontal_bias="0.524"
         app:layout_constraintStart_toStartOf="@+id/editTextLink"
         app:layout_constraintTop_toBottomOf="@+id/editTextLink" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

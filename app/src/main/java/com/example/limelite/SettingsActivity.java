@@ -15,6 +15,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -36,13 +37,13 @@ public class SettingsActivity extends AppCompatActivity {
     public static final String TAG = "SettingsActivity";
     private ImageView imageViewSettingsProfile;
     private Switch switchVisibility;
-    private Switch switchRadius;
     private Button buttonSaveSettings;
     private Button buttonLogout;
     private String photoFileName = "profile.jpg";
     private File photoFile = null;
     private ParseFile photofileParse = null;
     public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
+    private ParseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class SettingsActivity extends AppCompatActivity {
         buttonSaveSettings = findViewById(R.id.buttonSaveSettings);
         buttonLogout = findViewById(R.id.buttonLogout);
 
+        // set onClick listener for profile picture
         imageViewSettingsProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,17 +63,39 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        // Set profile picture and Visibility switch
         try {
-            ParseUser user = ParseUser.getCurrentUser().fetch();
+            user = ParseUser.getCurrentUser().fetch();
             ParseFile profile = (ParseFile) user.get("profilePic");
             if (profile != null) {
                 Log.i(TAG, profile.getUrl());
                 Glide.with(this).load(profile.getUrl()).into(imageViewSettingsProfile);
             }
+
+            Boolean visible = user.getBoolean("visible");
+            if (visible == false){
+                switchVisibility.setChecked(false);
+            }
+            else{
+                switchVisibility.setChecked(true);
+            }
+
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
+        // Logout functionality
+        buttonLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ParseUser.logOut();
+                Intent i = new Intent(getBaseContext(), LoginActivity.class);
+                startActivity(i);
+            }
+        });
+
+
+        // Functionality to save settings
         buttonSaveSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,29 +108,34 @@ public class SettingsActivity extends AppCompatActivity {
                         public void done(ParseException e) {
                             if (e == null) {
                                 ParseUser.getCurrentUser().put("profilePic", photofileParse);
+                                saveVisibility();
+                                // Save settings
                                 try {
                                     ParseUser.getCurrentUser().save();
                                 } catch (ParseException ex) {
                                     ex.printStackTrace();
                                 }
-                                // Save Map Visibility
 
                                 Toast.makeText(getBaseContext(),"Saved!", Toast.LENGTH_SHORT).show();
 
                                 Intent i = new Intent(getBaseContext(),MainActivity.class);
                                 startActivity(i);
-
-
                             }
                         }
                     });
+                } else {
+                    saveVisibility();
+                    try {
+                        ParseUser.getCurrentUser().save();
+                    } catch (ParseException ex) {
+                        ex.printStackTrace();
+                    }
+                    Toast.makeText(getBaseContext(),"Saved!", Toast.LENGTH_SHORT).show();
 
-
+                    Intent i = new Intent(getBaseContext(),MainActivity.class);
+                    startActivity(i);
 
                 }
-
-
-
 
             }
         });
@@ -165,4 +194,13 @@ public class SettingsActivity extends AppCompatActivity {
 
         return file;
     }
+
+    private void saveVisibility() {
+        if (switchVisibility.isChecked()) {
+            ParseUser.getCurrentUser().put("visible", true);
+        } else{
+            ParseUser.getCurrentUser().put("visible", false);
+        }
+    }
 }
+
