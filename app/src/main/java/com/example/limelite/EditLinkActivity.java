@@ -69,6 +69,20 @@ public class EditLinkActivity extends AppCompatActivity {
         });
 
         // Delete button functionality
+        buttonDeleteLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    link.delete();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                Intent i = new Intent(getBaseContext(), MainActivity.class);
+                startActivity(i);
+
+            }
+        });
 
 
     }
