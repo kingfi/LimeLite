@@ -1,13 +1,11 @@
 package com.example.limelite.fragments;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,10 +16,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.limelite.AddLinkActivity;
+import com.example.limelite.FriendListActivity;
 import com.example.limelite.adapters.ProfileAdapter;
 import com.example.limelite.R;
 import com.example.limelite.SettingsActivity;
@@ -30,9 +28,7 @@ import com.example.limelite.models.Relationships;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseRelation;
 import com.parse.ParseUser;
 
 import org.parceler.Parcels;
@@ -67,11 +63,11 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        textViewProfileUsername = view.findViewById(R.id.textViewProfileUsername);
+        textViewProfileUsername = view.findViewById(R.id.textViewFriendUsername);
         textViewFriendsCount = view.findViewById(R.id.textViewFriendsCount);
         buttonSettings = view.findViewById(R.id.buttonSettings);
-        recyclerViewLinks = view.findViewById(R.id.recyclerViewLinks);
-        imageViewProfilePic = view.findViewById(R.id.imageViewProfilePic);
+        recyclerViewLinks = view.findViewById(R.id.recyclerViewFriendLinks);
+        imageViewProfilePic = view.findViewById(R.id.imageViewFriendPic);
         textViewFriendsCount = view.findViewById(R.id.textViewFriendsCount);
         buttonAddLink = view.findViewById(R.id.buttonAddLink);
 
@@ -115,6 +111,16 @@ public class ProfileFragment extends Fragment {
             public void onClick(View view) {
                 // Go to AddLink Activity
                 Intent i = new Intent(getContext(), AddLinkActivity.class);
+                startActivity(i);
+            }
+        });
+
+        //onClick for Friends List Activity
+        textViewFriendsCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getContext(), FriendListActivity.class);
+                i.putExtra("relationsList", Parcels.wrap(relationsList));
                 startActivity(i);
             }
         });
