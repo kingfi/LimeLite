@@ -33,7 +33,7 @@ public class FriendListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_friend_list);
 
         //Initialize Variables
-//        textViewFriendListCount = findViewById(R.id.textViewFriendsCount);
+        textViewFriendListCount = findViewById(R.id.textViewFriendListCount);
         recyclerViewFriendList = findViewById(R.id.recyclerViewFriendList);
 
         // Unwrap intent
@@ -55,9 +55,12 @@ public class FriendListActivity extends AppCompatActivity {
         getFriends();
 
 
+
+
     }
 
     private void getFriends() {
+
         for (Relationships relation: relationsList) {
             if (relation.getStatus() == 1){
                 if (relation.getRequestee().getObjectId().equals(ParseUser.getCurrentUser().getObjectId())){
@@ -67,6 +70,8 @@ public class FriendListActivity extends AppCompatActivity {
                 }
             }
         }
+        // Set Friend Count text view
+        textViewFriendListCount.setText("Friends: " + friends.size());
         adapter.notifyDataSetChanged();
     }
 }

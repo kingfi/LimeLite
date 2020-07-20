@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.example.limelite.models.Link;
 import com.example.limelite.models.Relationships;
+import com.facebook.FacebookSdk;
 import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -17,6 +18,8 @@ public class ParseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+
 
         // Use for troubleshooting -- remove this line for production
         Parse.setLogLevel(Parse.LOG_LEVEL_DEBUG);
@@ -41,6 +44,8 @@ public class ParseApplication extends Application {
                 .clientKey(null)  // set explicitly unless clientKey is explicitly configured on Parse server
                 .clientBuilder(builder)
                 .server("https://limeliteparse.herokuapp.com/parse").build());
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
 
         // New test creation of object below
         // For testing purposes. If this object is not in the db, Parse is not configured correctly
