@@ -73,6 +73,7 @@ public class ProfileFragment extends Fragment {
 
         // Set profile picture
         try {
+            Log.i(TAG, "user " + ParseUser.getCurrentUser().getUsername());
             ParseUser user = ParseUser.getCurrentUser().fetch();
             ParseFile profile = user.getParseFile("profilePic");
             if (profile != null) {

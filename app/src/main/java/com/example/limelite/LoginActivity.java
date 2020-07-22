@@ -49,6 +49,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button buttonLogin;
     private Button buttonSignUp;
     private LoginButton buttonFacebookLogin;
+    private Collection<String> permissions = Arrays.asList("public_profile", "email");
+
 
 
     @Override
@@ -112,22 +114,19 @@ public class LoginActivity extends AppCompatActivity {
         buttonFacebookLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Collection<String> permissions = Arrays.asList("public_profile", "email");
                 ParseFacebookUtils.logInWithReadPermissionsInBackground(LoginActivity.this, permissions, new LogInCallback() {
                     @Override
                     public void done(ParseUser user, ParseException err) {
                         if (user == null) {
                             ParseUser.logOut();
-                            Log.d("MyApp", "Uh oh. The user cancelled the Facebook login.");
+                            Log.d("FB", "Uh oh. The user cancelled the Facebook login.");
                         } else if (user.isNew()) {
-                            Log.d("MyApp", "User signed up and logged in through Facebook!");
-                            getUserDetailsFromFB();
-                            // Navigate to the main activity
+                            Log.d("FB", "User signed up and logged in through Facebook!");
+                            getUserDetailsFromFB(user);
                             goMainActivity();
                             Toast.makeText(LoginActivity.this, "Success!", Toast.LENGTH_SHORT).show();
                         } else {
-                            Log.d("MyApp", "User logged in through Facebook!");
-                            // Navigate to the main activity
+                            Log.d("FB", "User logged in through Facebook!");
                             goMainActivity();
                             Toast.makeText(LoginActivity.this, "Success!", Toast.LENGTH_SHORT).show();
                         }
@@ -138,7 +137,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void getUserDetailsFromFB () {
+    private void getUserDetailsFromFB (final ParseUser user) {
         GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
             @Override
             public void onCompleted(JSONObject object, GraphResponse response) {
@@ -146,39 +145,56 @@ public class LoginActivity extends AppCompatActivity {
                 String lastName = "";
                 String email = "";
                 String username = "";
-                
+
+                Log.i("FB", object.toString());
+                Log.i("FB", response.toString());
+
                 try {
                     username = object.getString("name");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                try{
-                    firstName = object.getString("first_name");
+                    Log.i("FB", username);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 try {
                     email = object.getString("email");
+                    Log.i("FB", email);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                ParseUser user = ParseUser.getCurrentUser();
+
+
                 user.setUsername(username);
                 user.setEmail(email);
-                user.put("firstName", firstName);
-                user.put("lastName", lastName);
 
-                try {
-                    user.save();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                user.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e != null) {
+                            Log.e("FB", "Issue w/ Facebook login " + e);
+                        } else{
+                            Log.i("FB", "FB Login good");
+                        }
+                    }
+                });
             }
         });
         Bundle parameters = new Bundle();
         parameters.putString("fields", "name,email");
         request.setParameters(parameters);
         request.executeAsync();
+
+        if (!ParseFacebookUtils.isLinked(user)) {
+            ParseFacebookUtils.linkWithReadPermissionsInBackground(user, this, permissions, new SaveCallback() {
+                @Override
+                public void done(ParseException ex) {
+                    if (ParseFacebookUtils.isLinked(user)) {
+                        Log.d("FB", "Woohoo, user logged in with Facebook!");
+                    }
+                }
+            });
+        }
+
 
     }
 

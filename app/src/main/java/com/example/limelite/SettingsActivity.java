@@ -88,8 +88,10 @@ public class SettingsActivity extends AppCompatActivity {
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.i(TAG, "before logout" + ParseUser.getCurrentUser().getUsername());
                 ParseUser.logOut();
-                Intent i = new Intent(getBaseContext(), LoginActivity.class);
+                ParseUser currentUser = ParseUser.getCurrentUser();
+                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(i);
             }
         });

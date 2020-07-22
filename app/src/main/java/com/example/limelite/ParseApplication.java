@@ -45,7 +45,7 @@ public class ParseApplication extends Application {
                 .clientBuilder(builder)
                 .server("https://limeliteparse.herokuapp.com/parse").build());
 
-        FacebookSdk.sdkInitialize(getApplicationContext());
+        FacebookSdk.sdkInitialize(this);
 
         // New test creation of object below
         // For testing purposes. If this object is not in the db, Parse is not configured correctly
