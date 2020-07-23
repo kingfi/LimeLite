@@ -18,11 +18,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.limelite.AddLinkActivity;
-import com.example.limelite.FriendListActivity;
+import com.example.limelite.activities.AddLinkActivity;
+import com.example.limelite.activities.FriendListActivity;
 import com.example.limelite.adapters.ProfileAdapter;
 import com.example.limelite.R;
-import com.example.limelite.SettingsActivity;
+import com.example.limelite.activities.SettingsActivity;
 import com.example.limelite.models.Link;
 import com.example.limelite.models.Relationships;
 import com.parse.FindCallback;

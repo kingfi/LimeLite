@@ -1,4 +1,4 @@
-package com.example.limelite;
+package com.example.limelite.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.limelite.R;
 import com.example.limelite.adapters.FriendAdapter;
 import com.example.limelite.adapters.ProfileAdapter;
 import com.example.limelite.models.Link;
@@ -90,4 +91,5 @@ public class FriendActivity extends AppCompatActivity {
             }
         });
     }
+
 }

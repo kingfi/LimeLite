@@ -9,7 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.limelite.EditLinkActivity
+import com.example.limelite.activities.EditLinkActivity
 import com.example.limelite.models.Link
 import com.example.limelite.R
 import org.parceler.Parcels

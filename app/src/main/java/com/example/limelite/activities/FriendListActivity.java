@@ -1,4 +1,4 @@
-package com.example.limelite;
+package com.example.limelite.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.example.limelite.R;
 import com.example.limelite.adapters.FriendsListAdapter;
 import com.example.limelite.adapters.ProfileAdapter;
 import com.example.limelite.models.Relationships;

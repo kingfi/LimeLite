@@ -1,4 +1,4 @@
-package com.example.limelite;
+package com.example.limelite.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.example.limelite.R;
 import com.example.limelite.models.Link;
 import com.parse.ParseException;
 import com.parse.ParseUser;

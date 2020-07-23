@@ -11,11 +11,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.limelite.EditLinkActivity
-import com.example.limelite.FriendActivity.TAG
+import com.example.limelite.activities.FriendActivity.TAG
 import com.example.limelite.R
 import com.example.limelite.models.Link
-import org.parceler.Parcels
 
 class FriendAdapter (private val context: Context, private var links: MutableList<Link>) : RecyclerView.Adapter<FriendAdapter.ViewHolder>() {
 

@@ -2,8 +2,6 @@ package com.example.limelite.adapters
 
 import android.content.Context
 import android.content.Intent
-import android.system.Os.bind
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,11 +9,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.limelite.EditLinkActivity
-import com.example.limelite.FriendActivity
+import com.example.limelite.activities.FriendActivity
 import com.example.limelite.R
-import com.example.limelite.models.Link
-import com.example.limelite.models.Relationships
 import com.parse.ParseUser
 import org.parceler.Parcels
 

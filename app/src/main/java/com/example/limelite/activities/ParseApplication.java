@@ -1,4 +1,4 @@
-package com.example.limelite;
+package com.example.limelite.activities;
 
 import android.app.Application;
 
