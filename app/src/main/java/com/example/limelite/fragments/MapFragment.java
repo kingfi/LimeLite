@@ -25,6 +25,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
@@ -38,23 +43,14 @@ public class MapFragment extends Fragment {
 
     private SupportMapFragment mapFragment;
     private GoogleMap gmap;
+    private ParseUser user;
     private static Location mCurrentLocation;
-    private LatLng mCurrentCameraPosition;
     private final static String KEY_LOCATION = "location";
-    private FusedLocationProviderClient fusedLocationClient;
-    public static final int REQUEST_CODE = 101;
-    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
-    private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
-
-
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
-
-        
     }
 
     @Override
@@ -68,10 +64,9 @@ public class MapFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        mapView = view.findViewById(R.id.mapView);
-//        mapView.onCreate(savedInstanceState);
-//
-//        mapView.getMapAsync(this);
+        //Set User
+        user = ParseUser.getCurrentUser();
+
         Log.i(TAG, "View Created");
         if (savedInstanceState != null && savedInstanceState.keySet().contains(KEY_LOCATION)) {
             // Since KEY_LOCATION was found in the Bundle, we can be sure that mCurrentLocation
@@ -79,7 +74,6 @@ public class MapFragment extends Fragment {
             mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
         }
 
-//        mapView = view.findViewById(R.id.mapView);
         mapFragment = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.nearbyMap));
         if (mapFragment != null) {
             Log.i(TAG, "Map is not null");
@@ -107,38 +101,6 @@ public class MapFragment extends Fragment {
         }
     }
 
-
-//    @Override
-//    public void onMapReady(GoogleMap googleMap) {
-//
-//    }
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        mapView.onResume();
-//
-//    }
-//
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        mapView.onPause();
-//    }
-//
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        mapView.onDestroy();
-//    }
-//
-//
-//    @Override
-//    public void onLowMemory() {
-//        super.onLowMemory();
-//        mapView.onLowMemory();
-//    }
-
     // Google Maps, retrieve location
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -161,6 +123,16 @@ public class MapFragment extends Fragment {
                             Log.i(TAG, "Location: " + location.toString());
                             // On success to get current location: do something
                             mCurrentLocation = location;
+
+                            ParseGeoPoint geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
+
+                            user.put("location", geoPoint);
+                            user.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    Log.i(TAG, "Location uploaded to parse");
+                                }
+                            });
 
                             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()), 10F);
