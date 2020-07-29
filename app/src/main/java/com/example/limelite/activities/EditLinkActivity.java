@@ -40,6 +40,7 @@ public class EditLinkActivity extends AppCompatActivity {
 
         editTextLink.setText(link.getUrl());
 
+
         //Set up spinner
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.linkTypes, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

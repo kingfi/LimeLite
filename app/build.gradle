@@ -24,6 +24,11 @@ android {
     }
 }
 
+ext {
+    googlePlayVersion = "17.0.0"
+    permissionDispatcherVersion = "4.7.0"
+}
+
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -52,5 +57,9 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
     implementation 'com.github.parse-community.Parse-SDK-Android:bolts-tasks:1.24.2'
     implementation "com.github.parse-community.Parse-SDK-Android:facebook:1.24.2"
+    implementation "com.google.android.gms:play-services-maps:$googlePlayVersion"
+    implementation "com.google.android.gms:play-services-location:$googlePlayVersion"
+    implementation "org.permissionsdispatcher:permissionsdispatcher:$permissionDispatcherVersion"
+    annotationProcessor "org.permissionsdispatcher:permissionsdispatcher-processor:$permissionDispatcherVersion"
 
 }

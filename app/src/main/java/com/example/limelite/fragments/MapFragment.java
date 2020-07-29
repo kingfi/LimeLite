@@ -1,60 +1,58 @@
 package com.example.limelite.fragments;
 
+import android.Manifest;
+import android.location.Location;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.limelite.R;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MapFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
+
+import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
+
+@RuntimePermissions
 public class MapFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    public static final String TAG = "MapFragment";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private MapView mapView;
+    private SupportMapFragment mapFragment;
+    private Location currentLocation;
+    private GoogleMap gmap;
+    private static Location mCurrentLocation;
+    private final static String KEY_LOCATION = "location";
+    private FusedLocationProviderClient fusedLocationClient;
+    public static final int REQUEST_CODE = 101;
+    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
 
-    public MapFragment() {
-        // Required empty public constructor
-    }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MapFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MapFragment newInstance(String param1, String param2) {
-        MapFragment fragment = new MapFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+//        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+
+        
     }
 
     @Override
@@ -63,4 +61,117 @@ public class MapFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+//        mapView = view.findViewById(R.id.mapView);
+//        mapView.onCreate(savedInstanceState);
+//
+//        mapView.getMapAsync(this);
+        Log.i(TAG, "View Created");
+        if (savedInstanceState != null && savedInstanceState.keySet().contains(KEY_LOCATION)) {
+            // Since KEY_LOCATION was found in the Bundle, we can be sure that mCurrentLocation
+            // is not null.
+            mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
+        }
+
+//        mapView = view.findViewById(R.id.mapView);
+        mapFragment = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.nearbyMap));
+        if (mapFragment != null) {
+            Log.i(TAG, "Map is not null");
+            mapFragment.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap map) {
+                    Log.i(TAG, "Load map");
+                    loadMap(map);
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), "Error - Map Fragment was null!!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void loadMap(GoogleMap map) {
+        gmap = map;
+
+        if (gmap != null) {
+            //Map is ready
+            Log.i(TAG, "Map is Ready");
+//            MapFragmentFragmentPermissionsDispatcher.getMyLocationWithPermissionCheck(this);
+            MapFragmentPermissionsDispatcher.getMyLocationWithPermissionCheck(this);
+
+        }
+    }
+
+
+//    @Override
+//    public void onMapReady(GoogleMap googleMap) {
+//
+//    }
+
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        mapView.onResume();
+//
+//    }
+//
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        mapView.onPause();
+//    }
+//
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        mapView.onDestroy();
+//    }
+//
+//
+//    @Override
+//    public void onLowMemory() {
+//        super.onLowMemory();
+//        mapView.onLowMemory();
+//    }
+
+    // Google Maps, retrieve location
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // If this is in a fragment: do SomeClassFragmentPermissionsDispatcher
+        MapFragmentPermissionsDispatcher.getMyLocationWithPermissionCheck(this);
+    }
+
+    @SuppressWarnings({"MissingPermission"})
+    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+    public void getMyLocation() {
+        // Access users current location
+        FusedLocationProviderClient locationClient = getFusedLocationProviderClient(getContext());
+        locationClient.getLastLocation()
+                .addOnSuccessListener(new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            Log.i(TAG, "Location: " + location.toString());
+                            // On success to get current location: do something
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Error trying to get last GPS location");
+                        e.printStackTrace();
+                    }
+                });
+    }
+
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putParcelable(KEY_LOCATION, mCurrentLocation);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
 }
