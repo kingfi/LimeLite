@@ -23,13 +23,18 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+
+import java.util.List;
 
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
@@ -121,8 +126,7 @@ public class MapFragment extends Fragment {
                     public void onSuccess(Location location) {
                         if (location != null) {
                             Log.i(TAG, "Location: " + location.toString());
-                            // On success to get current location: do something
-                            mCurrentLocation = location;
+                            // On success to get current location: Save current location in Parse
 
                             ParseGeoPoint geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
 
@@ -134,10 +138,15 @@ public class MapFragment extends Fragment {
                                 }
                             });
 
+                            // Move map camera position to current location
                             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
-                                    new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()), 10F);
+                                    new LatLng(location.getLatitude(), location.getLongitude()), 30F);
 
                             gmap.animateCamera(cameraUpdate);
+
+                            getNearbyUsers(location);
+
+
 
                         }
                     }
@@ -149,6 +158,37 @@ public class MapFragment extends Fragment {
                         e.printStackTrace();
                     }
                 });
+    }
+
+    private void getNearbyUsers(final Location location) {
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo("visible", true);
+        query.whereNotEqualTo("objectId", user.getObjectId());
+
+
+        query.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> users, ParseException e) {
+                if (e == null) {
+                    for (ParseUser receivedUser : users) {
+
+                        try{
+                            receivedUser.fetch();
+                        } catch(ParseException ex) {
+                            Log.e(TAG, String.valueOf(ex));
+                        }
+
+//                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                        ParseGeoPoint geoPoint = receivedUser.getParseGeoPoint("location");
+                        LatLng latLng = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
+
+                        gmap.addMarker(new MarkerOptions().position(latLng).title(receivedUser.getUsername()).draggable(true));
+                        Log.i(TAG, receivedUser.getUsername() + " Location: " + receivedUser.get("location").toString());
+                    }
+                }
+            }
+        });
+
     }
 
     public void onSaveInstanceState(Bundle savedInstanceState) {
