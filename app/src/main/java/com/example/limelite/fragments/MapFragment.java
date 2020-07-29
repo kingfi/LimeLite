@@ -16,10 +16,13 @@ import android.widget.Toast;
 
 import com.example.limelite.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -33,11 +36,10 @@ public class MapFragment extends Fragment {
 
     public static final String TAG = "MapFragment";
 
-    private MapView mapView;
     private SupportMapFragment mapFragment;
-    private Location currentLocation;
     private GoogleMap gmap;
     private static Location mCurrentLocation;
+    private LatLng mCurrentCameraPosition;
     private final static String KEY_LOCATION = "location";
     private FusedLocationProviderClient fusedLocationClient;
     public static final int REQUEST_CODE = 101;
@@ -148,6 +150,7 @@ public class MapFragment extends Fragment {
     @SuppressWarnings({"MissingPermission"})
     @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
     public void getMyLocation() {
+        gmap.setMyLocationEnabled(true);
         // Access users current location
         FusedLocationProviderClient locationClient = getFusedLocationProviderClient(getContext());
         locationClient.getLastLocation()
@@ -157,6 +160,13 @@ public class MapFragment extends Fragment {
                         if (location != null) {
                             Log.i(TAG, "Location: " + location.toString());
                             // On success to get current location: do something
+                            mCurrentLocation = location;
+
+                            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
+                                    new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()), 10F);
+
+                            gmap.animateCamera(cameraUpdate);
+
                         }
                     }
                 })
