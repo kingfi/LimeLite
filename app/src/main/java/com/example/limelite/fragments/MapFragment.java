@@ -1,7 +1,11 @@
 package com.example.limelite.fragments;
 
 import android.Manifest;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.location.Location;
+import android.media.ExifInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,18 +26,27 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 import permissions.dispatcher.NeedsPermission;
@@ -182,7 +195,34 @@ public class MapFragment extends Fragment {
                         ParseGeoPoint geoPoint = receivedUser.getParseGeoPoint("location");
                         LatLng latLng = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
 
-                        gmap.addMarker(new MarkerOptions().position(latLng).title(receivedUser.getUsername()).draggable(true));
+                        ParseFile parseFile = receivedUser.getParseFile("profilePic");
+
+                        Marker marker = gmap.addMarker(new MarkerOptions().position(latLng).title(receivedUser.getUsername()).draggable(true));
+                        marker.setTag(receivedUser);
+
+                        try {
+                            File file = parseFile.getFile();
+                            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                            Bitmap resizedBitmap = Bitmap.createScaledBitmap(
+                                    bitmap, 100, 100, false);
+
+                            //rotate bitmap image
+                            ExifInterface exif = new ExifInterface(file.getAbsolutePath());
+                            Integer orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                            Matrix matrix = new Matrix();
+                            if (orientation == 6) {
+                                matrix.postRotate(90F);
+                            } else if (orientation == 3) {
+                                matrix.postRotate(180F);
+                            } else if (orientation == 8) {
+                                matrix.postRotate(270F);
+                            }
+                            resizedBitmap = Bitmap.createBitmap(resizedBitmap,0,0, resizedBitmap.getWidth(), resizedBitmap.getHeight(), matrix, true);
+                            marker.setIcon(BitmapDescriptorFactory.fromBitmap(resizedBitmap));
+                        } catch (ParseException | IOException ex) {
+                            ex.printStackTrace();
+                        }
+
                         Log.i(TAG, receivedUser.getUsername() + " Location: " + receivedUser.get("location").toString());
                     }
                 }
@@ -190,6 +230,23 @@ public class MapFragment extends Fragment {
         });
 
     }
+
+//    public static Bitmap getBitmapFromURL(String src) {
+//        try {
+//            URL url = new URL(src);
+//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//            connection.setDoInput(true);
+//            connection.connect();
+//            InputStream input = connection.getInputStream();
+//            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+//            return myBitmap;
+//        } catch (IOException e) {
+//            // Log exception
+//            return null;
+//        }
+//    }
+
+
 
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putParcelable(KEY_LOCATION, mCurrentLocation);
