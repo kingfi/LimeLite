@@ -1,6 +1,7 @@
 package com.example.limelite.fragments;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -10,15 +11,20 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.limelite.R;
+import com.example.limelite.models.Relationships;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -42,11 +48,15 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import permissions.dispatcher.NeedsPermission;
@@ -62,6 +72,10 @@ public class MapFragment extends Fragment {
     private SupportMapFragment mapFragment;
     private GoogleMap gmap;
     private ParseUser user;
+    private ArrayList<Relationships> relationsList;
+    private ArrayList<String> friendsList;
+    private ArrayList<String> pendingFriends;
+    private ArrayList<String> requestingFriends;
     private static Location mCurrentLocation;
     private final static String KEY_LOCATION = "location";
 
@@ -81,6 +95,20 @@ public class MapFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        friendsList = new ArrayList<>();
+        pendingFriends = new ArrayList<>();
+        requestingFriends = new ArrayList<>();
+        relationsList = new ArrayList<>();
+
+        // Query relationships and populate friends lists
+        try {
+            Log.i(TAG, "AB to QUERY");
+            queryRelationships();
+            Log.i(TAG, "QUERY DONE");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         //Set User
         user = ParseUser.getCurrentUser();
@@ -105,18 +133,173 @@ public class MapFragment extends Fragment {
         } else {
             Toast.makeText(getContext(), "Error - Map Fragment was null!!", Toast.LENGTH_SHORT).show();
         }
+
+
     }
 
-    private void loadMap(GoogleMap map) {
+    private void loadMap(final GoogleMap map) {
         gmap = map;
 
         if (gmap != null) {
             //Map is ready
             Log.i(TAG, "Map is Ready");
-//            MapFragmentFragmentPermissionsDispatcher.getMyLocationWithPermissionCheck(this);
             MapFragmentPermissionsDispatcher.getMyLocationWithPermissionCheck(this);
-
         }
+
+        gmap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Log.i(TAG, "CLICKED");
+                // Show popup of user's name and profile
+
+                // inflate map_user_item
+                View messageView = LayoutInflater.from(getContext()).inflate(R.layout.map_user_item, null);
+                // Create alert dialog builder
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+
+                // get User associated with Marker
+                final ParseUser clickedUser = (ParseUser) marker.getTag();
+
+
+                // Load data into view
+                TextView usernameView = messageView.findViewById(R.id.map_item_username);
+                ImageView profileImage = messageView.findViewById(R.id.map_item_profile);
+                TextView textViewStatus = messageView.findViewById(R.id.textViewStatus);
+
+                usernameView.setText(clickedUser.getUsername());
+                ParseFile profile = clickedUser.getParseFile("profilePic");
+                if (profile != null) {
+                    Log.i(TAG, profile.getUrl());
+                    Glide.with(getContext()).load(profile.getUrl()).into(profileImage);
+                    Log.i(TAG, "Profile Set");
+                }
+
+                // set message_item.xml to AlertDialog builder
+                alertDialogBuilder.setView(messageView);
+
+                // Create alert dialog
+                final AlertDialog alertDialog = alertDialogBuilder.create();
+
+                Log.i(TAG, "Friends: " + friendsList.toString());
+                Log.i(TAG, "Pending: " + pendingFriends.toString());
+                Log.i(TAG, "Requesting: " + requestingFriends.toString());
+
+                Log.i(TAG, "Clicked User: " + clickedUser.toString());
+
+
+                if (friendsList.contains(clickedUser.getObjectId())) {
+                    Log.i(TAG, "FRIEND");
+
+                    // Alert box for someone who is already friended
+                    textViewStatus.setText("You and " + clickedUser.getUsername() + " are friends!");
+                    alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {dialogInterface.cancel();}
+                            });
+                } else if (pendingFriends.contains(clickedUser.getObjectId())) {
+                    Log.i(TAG, "PENDING");
+
+                    // Alert box for someone who is pending
+                    textViewStatus.setText("Waiting for " + clickedUser.getUsername() + " to accept");
+
+                    alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) { dialogInterface.cancel(); }
+                    });
+                } else if (requestingFriends.contains(clickedUser.getObjectId())) {
+                    Log.i(TAG, "REQUESTING");
+
+                    // Alert box for someone who has sent you a friend request
+
+                    // Reject request
+                    alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "REJECT", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            for (Relationships relation: relationsList) {
+                                if (relation.getRequestor().getObjectId() == clickedUser.getObjectId()) {
+                                    relation.setStatus(2);
+                                    try {
+                                        relation.save();
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+
+                            requestingFriends.remove(clickedUser.getObjectId());
+                        }
+                    });
+
+                    //
+                    alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "CANCEL", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) { dialogInterface.cancel(); }
+                    });
+
+                    //Accept Request
+                    alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "ACCEPT", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Log.i(TAG, "Clicked ACCEPT");
+                            for (Relationships relation: relationsList) {
+
+                                // Add Friend
+                                if (relation.getRequestor().getObjectId().equals(clickedUser.getObjectId())) {
+                                    relation.setStatus(1);
+                                    try {
+                                        relation.save();
+                                        Log.i(TAG, "ACCEPTED");
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                // Update lists
+                                requestingFriends.remove(clickedUser.getObjectId());
+                                friendsList.add(clickedUser.getObjectId());
+                            }
+                        }
+                    });
+                } else {
+                    Log.i(TAG, "UNKNOWN");
+
+                    alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "SEND REQUEST", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Relationships relationship = new Relationships();
+                            relationship.setStatus(0);
+                            relationship.setRequestor(user);
+                            relationship.setRequestee(clickedUser);
+                            try {
+                                relationship.save();
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+
+                            //Update lists
+                            pendingFriends.add(clickedUser.getObjectId());
+                        }
+                    });
+
+                    alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "CANCEL", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+
+
+                }
+
+                alertDialog.show();
+
+
+                return false;
+            }
+        });
+
     }
 
     // Google Maps, retrieve location
@@ -159,8 +342,6 @@ public class MapFragment extends Fragment {
 
                             getNearbyUsers(location);
 
-
-
                         }
                     }
                 })
@@ -197,7 +378,7 @@ public class MapFragment extends Fragment {
 
                         ParseFile parseFile = receivedUser.getParseFile("profilePic");
 
-                        Marker marker = gmap.addMarker(new MarkerOptions().position(latLng).title(receivedUser.getUsername()).draggable(true));
+                        Marker marker = gmap.addMarker(new MarkerOptions().position(latLng).title(receivedUser.getUsername()));
                         marker.setTag(receivedUser);
 
                         try {
@@ -231,21 +412,41 @@ public class MapFragment extends Fragment {
 
     }
 
-//    public static Bitmap getBitmapFromURL(String src) {
-//        try {
-//            URL url = new URL(src);
-//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//            connection.setDoInput(true);
-//            connection.connect();
-//            InputStream input = connection.getInputStream();
-//            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-//            return myBitmap;
-//        } catch (IOException e) {
-//            // Log exception
-//            return null;
-//        }
-//    }
+    private void queryRelationships() throws ParseException {
+        ParseQuery queryRequestor = ParseQuery.getQuery(Relationships.class);
+        ParseQuery queryRequestee = ParseQuery.getQuery(Relationships.class);
 
+
+        queryRequestor.include(Relationships.KEY_REQUESTOR);
+        queryRequestor.whereEqualTo(Relationships.KEY_REQUESTOR, ParseUser.getCurrentUser());
+
+        queryRequestee.include(Relationships.KEY_REQUESTEE);
+        queryRequestee.whereEqualTo(Relationships.KEY_REQUESTEE, ParseUser.getCurrentUser());
+
+        relationsList.addAll((ArrayList<Relationships>) queryRequestor.find());
+        relationsList.addAll((ArrayList<Relationships>) queryRequestee.find());
+
+        for (Relationships relation: relationsList) {
+            if (relation.getStatus() == 1){
+                if (relation.getRequestee().getObjectId().equals(ParseUser.getCurrentUser().getObjectId())){
+                    friendsList.add(relation.getRequestor().getObjectId());
+                    Log.i(TAG, "FRIEND ADDED: " + relation.getRequestor().fetch().getUsername() + " " + relation.getRequestor().toString());
+
+                }else{
+                    friendsList.add(relation.getRequestee().getObjectId());
+                    Log.i(TAG, "FRIEND ADDED: " + relation.getRequestee().fetch().getUsername()+ " " + relation.getRequestee().toString());
+                }
+            } if (relation.getStatus() == 0){
+                if (relation.getRequestee().getObjectId().equals(ParseUser.getCurrentUser().getObjectId())){
+                    requestingFriends.add(relation.getRequestor().getObjectId());
+
+                }else{
+                    pendingFriends.add(relation.getRequestee().getObjectId());
+                }
+            }
+        }
+
+    }
 
 
     public void onSaveInstanceState(Bundle savedInstanceState) {
