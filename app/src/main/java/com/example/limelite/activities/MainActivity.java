@@ -6,23 +6,18 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.limelite.R;
 import com.example.limelite.fragments.MapFragment;
-import com.example.limelite.fragments.NFCFragment;
+import com.example.limelite.fragments.FriendsFragment;
 import com.example.limelite.fragments.ProfileFragment;
 import com.example.limelite.helpers.NFCUtils;
 import com.example.limelite.models.Relationships;
@@ -65,7 +60,7 @@ public class MainActivity extends AppCompatActivity  {
                         fragment = new ProfileFragment();
                         break;
                     case R.id.action_nfc:
-                        fragment = new NFCFragment();
+                        fragment = new FriendsFragment();
                         break;
                     case R.id.action_map:
                         fragment = new MapFragment();

@@ -61,5 +61,8 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:$googlePlayVersion"
     implementation "org.permissionsdispatcher:permissionsdispatcher:$permissionDispatcherVersion"
     annotationProcessor "org.permissionsdispatcher:permissionsdispatcher-processor:$permissionDispatcherVersion"
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
+    implementation 'com.google.android.material:material:<version>'
+
 
 }
