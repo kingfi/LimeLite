@@ -5,8 +5,11 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.limelite.activities.EditLinkActivity
@@ -34,6 +37,7 @@ class ProfileAdapter (private val context: Context, private var links: MutableLi
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         private val imageViewLinkType: ImageView = itemView.findViewById(R.id.imageViewLinkType)
         private val textViewLink: TextView = itemView.findViewById(R.id.textViewLink)
+        private val constraintLayoutItemLnk: ConstraintLayout = itemView.findViewById(R.id.constraintLayout_item_link)
 
         init {
             itemView.setOnClickListener(this)
@@ -59,6 +63,7 @@ class ProfileAdapter (private val context: Context, private var links: MutableLi
             }
 
 
+            constraintLayoutItemLnk.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_transition_animation))
 
         }
 
@@ -86,3 +91,5 @@ class ProfileAdapter (private val context: Context, private var links: MutableLi
     }
 
 }
+
+

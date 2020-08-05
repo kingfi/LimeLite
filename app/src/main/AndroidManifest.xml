@@ -30,7 +30,6 @@
 
         <activity android:name=".activities.FriendActivity" />
         <activity android:name=".activities.AddLinkActivity" />
-        <activity android:name=".activities.FriendListActivity" />
         <activity android:name=".activities.EditLinkActivity" />
 
         <meta-data

@@ -1,4 +1,4 @@
-package com.example.limelite.fragments;
+package com.example.limelite.adapters;
 
 import android.os.Bundle;
 

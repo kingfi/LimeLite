@@ -32,8 +32,8 @@ class FriendsListAdapter (private val context: Context, private var friends: Mut
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
-        private val imageViewFriendProfile: ImageView = itemView.findViewById(R.id.imageViewFriendProfile)
-        private val textViewFriendName: TextView = itemView.findViewById(R.id.textViewFriendName)
+        private val imageViewFriendProfile: ImageView = itemView.findViewById(R.id.imageViewRequesterProfile)
+        private val textViewFriendName: TextView = itemView.findViewById(R.id.textViewRequesterName)
 
         init {
             itemView.setOnClickListener(this)

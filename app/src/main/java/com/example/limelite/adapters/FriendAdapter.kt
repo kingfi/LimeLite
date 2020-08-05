@@ -7,8 +7,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.limelite.activities.FriendActivity.TAG
@@ -35,6 +37,7 @@ class FriendAdapter (private val context: Context, private var links: MutableLis
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         private val imageViewLinkType: ImageView = itemView.findViewById(R.id.imageViewLinkType)
         private val textViewLink: TextView = itemView.findViewById(R.id.textViewLink)
+        private val constraintLayoutItemLnk: ConstraintLayout = itemView.findViewById(R.id.constraintLayout_item_link)
 
         init {
             itemView.setOnClickListener(this)
@@ -58,6 +61,9 @@ class FriendAdapter (private val context: Context, private var links: MutableLis
             } else {
                 Glide.with(context).load(R.drawable.ic_link).into(imageViewLinkType)
             }
+
+            constraintLayoutItemLnk.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_transition_animation))
+
 
         }
 

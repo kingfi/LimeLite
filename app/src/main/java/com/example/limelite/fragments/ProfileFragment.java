@@ -19,7 +19,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.limelite.activities.AddLinkActivity;
-import com.example.limelite.activities.FriendListActivity;
 import com.example.limelite.adapters.ProfileAdapter;
 import com.example.limelite.R;
 import com.example.limelite.activities.SettingsActivity;
@@ -116,15 +115,6 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        //onClick for Friends List Activity
-        textViewFriendsCount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(getContext(), FriendListActivity.class);
-                i.putExtra("relationsList", Parcels.wrap(relationsList));
-                startActivity(i);
-            }
-        });
 
         // create the data source
         allLinks = new ArrayList<>();
