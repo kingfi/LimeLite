@@ -63,11 +63,9 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         textViewProfileUsername = view.findViewById(R.id.textViewFriendUsername);
-        textViewFriendsCount = view.findViewById(R.id.textViewFriendsCount);
         buttonSettings = view.findViewById(R.id.buttonSettings);
         recyclerViewLinks = view.findViewById(R.id.recyclerViewFriendLinks);
         imageViewProfilePic = view.findViewById(R.id.imageViewFriendPic);
-        textViewFriendsCount = view.findViewById(R.id.textViewFriendsCount);
         buttonAddLink = view.findViewById(R.id.buttonAddLink);
 
         // Set profile picture
@@ -94,7 +92,7 @@ public class ProfileFragment extends Fragment {
         }
 
         // Set username to view
-        textViewProfileUsername.setText((String) ParseUser.getCurrentUser().get("firstName"));
+        textViewProfileUsername.setText((String) ParseUser.getCurrentUser().getUsername());
 
         //onClick for button settings
         buttonSettings.setOnClickListener(new View.OnClickListener() {
@@ -142,14 +140,6 @@ public class ProfileFragment extends Fragment {
 
         relationsList.addAll((ArrayList<Relationships>) queryRequestor.find());
         relationsList.addAll((ArrayList<Relationships>) queryRequestee.find());
-
-        Integer friends = 0;
-        for (Relationships relation: relationsList) {
-            if (relation.getStatus() == 1) {
-                friends ++;
-            }
-        }
-        textViewFriendsCount.setText("Friends: " + friends);
 
     }
 

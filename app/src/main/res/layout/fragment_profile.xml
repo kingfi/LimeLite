@@ -16,18 +16,6 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="username" />
 
-    <TextView
-        android:id="@+id/textViewFriendsCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:clickable="false"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewFriendPic"
-        tools:text="Friends: 0" />
-
     <ImageView
         android:id="@+id/buttonSettings"
         android:layout_width="30dp"
@@ -65,12 +53,10 @@
         android:id="@+id/buttonAddLink"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:text="Add Link"
-        app:layout_constraintEnd_toEndOf="@+id/textViewFriendsCount"
-        app:layout_constraintHorizontal_bias="0.863"
-        app:layout_constraintStart_toStartOf="@+id/textViewFriendsCount"
-        app:layout_constraintTop_toBottomOf="@+id/textViewFriendsCount" />
+        app:layout_constraintEnd_toEndOf="@+id/imageViewFriendPic"
+        app:layout_constraintStart_toStartOf="@+id/imageViewFriendPic"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewFriendPic" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -85,8 +85,8 @@ public class SettingsActivity extends AppCompatActivity {
                 Log.i(TAG, "before logout" + ParseUser.getCurrentUser().getUsername());
                 ParseUser.logOut();
                 ParseUser currentUser = ParseUser.getCurrentUser();
-                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(i);
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
             }
         });
 

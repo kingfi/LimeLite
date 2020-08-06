@@ -55,7 +55,6 @@ public class LoginActivity extends AppCompatActivity {
             goMainActivity();
         }
 
-        ParseFacebookUtils.initialize(this);
 
         // Assign widgets to widget variables
         editTextUsername = findViewById(R.id.editTextUsername);

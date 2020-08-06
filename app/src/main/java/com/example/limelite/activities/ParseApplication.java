@@ -8,6 +8,7 @@ import com.facebook.FacebookSdk;
 import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.parse.facebook.ParseFacebookUtils;
 
 import org.json.JSONArray;
 
@@ -46,6 +47,8 @@ public class ParseApplication extends Application {
                 .server("https://limeliteparse.herokuapp.com/parse").build());
 
         FacebookSdk.sdkInitialize(this);
+        ParseFacebookUtils.initialize(this);
+
 
         // New test creation of object below
         // For testing purposes. If this object is not in the db, Parse is not configured correctly

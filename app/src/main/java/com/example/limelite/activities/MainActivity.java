@@ -112,6 +112,8 @@ public class MainActivity extends AppCompatActivity  {
         super.onResume();
 
         _enableNdefExchangeMode();
+
+
     }
 
     // Set up adapters to prepare for information exchange (Sending object id of current user)
@@ -171,7 +173,10 @@ public class MainActivity extends AppCompatActivity  {
                 }
             });
 
-
+            finish();
+            overridePendingTransition(0, 0);
+            startActivity(getIntent());
+            overridePendingTransition(0, 0);
 
 
         }
