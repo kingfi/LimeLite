@@ -72,6 +72,7 @@ public class MapFragment extends Fragment {
     private SupportMapFragment mapFragment;
     private GoogleMap gmap;
     private ParseUser user;
+    private Location userLocation;
     private ArrayList<Relationships> relationsList;
     private ArrayList<String> friendsList;
     private ArrayList<String> pendingFriends;
@@ -322,6 +323,8 @@ public class MapFragment extends Fragment {
                     public void onSuccess(Location location) {
                         if (location != null) {
                             Log.i(TAG, "Location: " + location.toString());
+                            userLocation = location;
+
                             // On success to get current location: Save current location in Parse
 
                             ParseGeoPoint geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
@@ -372,9 +375,15 @@ public class MapFragment extends Fragment {
                             Log.e(TAG, String.valueOf(ex));
                         }
 
-//                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                         ParseGeoPoint geoPoint = receivedUser.getParseGeoPoint("location");
                         LatLng latLng = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
+
+                        Double dist = distance(userLocation.getLatitude(), userLocation.getLongitude(), geoPoint.getLatitude(), geoPoint.getLongitude());
+
+                        // Check if distance is longer than 100 yards
+                        if (dist >= 0.0568182) {
+                            continue;
+                        }
 
                         ParseFile parseFile = receivedUser.getParseFile("profilePic");
 
@@ -446,6 +455,21 @@ public class MapFragment extends Fragment {
             }
         }
 
+    }
+
+    // Function to calculate distance between two points
+    private static double distance(double lat1, double lon1, double lat2, double lon2) {
+        if ((lat1 == lat2) && (lon1 == lon2)) {
+            return 0;
+        }
+        else {
+            double theta = lon1 - lon2;
+            double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
+            dist = Math.acos(dist);
+            dist = Math.toDegrees(dist);
+            dist = dist * 60 * 1.1515;
+            return (dist);
+        }
     }
 
 
