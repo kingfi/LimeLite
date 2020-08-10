@@ -376,6 +376,9 @@ public class MapFragment extends Fragment {
                         }
 
                         ParseGeoPoint geoPoint = receivedUser.getParseGeoPoint("location");
+                        if (geoPoint == null) {
+                            continue;
+                        }
                         LatLng latLng = new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude());
 
                         Double dist = distance(userLocation.getLatitude(), userLocation.getLongitude(), geoPoint.getLatitude(), geoPoint.getLongitude());
